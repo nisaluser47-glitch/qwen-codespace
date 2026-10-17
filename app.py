@@ -4,7 +4,6 @@ import torch
 
 app = Flask(__name__)
 
-# Qwen Model සහ Tokenizer Load කරගැනීම
 model_name = "Qwen/Qwen2.5-0.5B-Instruct"
 print("⏳ Loading Qwen2.5-0.5B Model into Cloud Memory...")
 
@@ -29,7 +28,6 @@ def chat():
 
         prompt = data.get("message", "")
         
-        # Qwen Chat Template සකස් කිරීම
         messages = [
             {"role": "system", "content": "You are Thinext AI. Give helpful, accurate responses in Markdown format."},
             {"role": "user", "content": prompt}
@@ -43,7 +41,6 @@ def chat():
         
         model_inputs = tokenizer([text], return_tensors="pt")
         
-        # Text Generation
         generated_ids = model.generate(
             **model_inputs,
             max_new_tokens=250,
