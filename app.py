@@ -16,6 +16,10 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 print("✅ Qwen Model Loaded Successfully!")
 
+@app.route("/", methods=["GET"])
+def home():
+    return "Thinext AI Qwen Codespace API is Running Successfully! 🚀"
+
 @app.route("/api/chat", methods=["POST"])
 def chat():
     try:
@@ -24,21 +28,21 @@ def chat():
             return jsonify({"error": "Message required"}), 400
 
         prompt = data.get("message", "")
-
+        
         # Qwen Chat Template සකස් කිරීම
         messages = [
             {"role": "system", "content": "You are Thinext AI. Give helpful, accurate responses in Markdown format."},
             {"role": "user", "content": prompt}
         ]
-
+        
         text = tokenizer.apply_chat_template(
             messages,
             tokenize=False,
             add_generation_prompt=True
         )
-
+        
         model_inputs = tokenizer([text], return_tensors="pt")
-
+        
         # Text Generation
         generated_ids = model.generate(
             **model_inputs,
@@ -46,11 +50,11 @@ def chat():
             temperature=0.6,
             top_p=0.9
         )
-
+        
         generated_ids = [
             output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
         ]
-
+        
         response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
 
         return jsonify({
