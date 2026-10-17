@@ -19,7 +19,11 @@ print("✅ Qwen Model Loaded Successfully!")
 @app.route("/api/chat", methods=["POST"])
 def chat():
     try:
-        data = request.json
+        # Request එක JSON ද නැද්ද යන්න ආරක්ෂිතව පරීක්ෂා කිරීම
+        if not request.is_json:
+            return jsonify({"error": "Content-Type must be application/json"}), 400
+
+        data = request.get_json()
         prompt = data.get("message", "")
         
         if not prompt:
@@ -63,5 +67,4 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    # Codespaces හෝ HF Spaces වල run කිරීමට port 7860 හෝ 3000 භාවිත කළ හැක
     app.run(host="0.0.0.0", port=7860)
